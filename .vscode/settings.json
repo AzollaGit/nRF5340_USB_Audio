@@ -1,0 +1,15 @@
+{
+    "nrf-connect.topdir": "c:\\ncs\\v2.6.1",
+    "files.associations": {
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "log.h": "c",
+        "hal_uart.h": "c",
+        "nrfy_i2s.h": "c",
+        "data_fifo.h": "c",
+        "audio_usb.h": "c",
+        "hal_gpio.h": "c",
+        "audio_i2s.h": "c"
+    }
+}

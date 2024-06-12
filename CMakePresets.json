@@ -1,0 +1,21 @@
+{
+    "version": 2,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20
+    },
+    "configurePresets": [
+        {
+            "name": "build",
+            "displayName": "Build for nrf5340dk",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "NCS_TOOLCHAIN_VERSION": "NONE",
+                "BOARD": "nrf5340dk",
+                "hci_ipc_OVERLAY_CONFIG": "$env{ZEPHYR_BASE}/../nrf/subsys/partition_manager/partition_manager_enabled.conf;${sourceParentDir}/nrf5340_audio/child_image/hci_ipc.conf",
+                "CACHED_CONF_FILE": "${sourceDir}/prj.conf"
+            }
+        }
+    ]
+}
