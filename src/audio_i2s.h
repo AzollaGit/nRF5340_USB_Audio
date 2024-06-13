@@ -72,6 +72,8 @@ void audio_i2s_stop(void);
  */
 void audio_i2s_blk_comp_cb_register(i2s_blk_comp_callback_t blk_comp_callback);
 
+void hfclkaudio_set(uint16_t freq_value);
+
 /**
  * @brief Initialize I2S module
  */

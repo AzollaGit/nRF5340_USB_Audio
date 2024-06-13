@@ -709,13 +709,18 @@ static int set_available_contexts(void)
 #include "hal_gpio.h"
 #include "audio_i2s.h"
 #include "audio_usb.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 LOG_MODULE_REGISTER(app_main, LOG_LEVEL_DBG);
-
+ 
 void uart_recv_callback(uart_port_t uart_port, uint8_t *data, uint8_t len)
 {
 	LOG_INF("port[%d] = %s | %d", uart_port, data, len);
 	LOG_HEXDUMP_INF(data, len, "hex");
+	int freq_value = atoi(data);
+	hfclkaudio_set(freq_value);
 }
 
 int main(void)

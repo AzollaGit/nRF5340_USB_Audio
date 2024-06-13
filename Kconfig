@@ -6,7 +6,7 @@
 
 menuconfig NRF5340_AUDIO
 	 bool "nRF5340 Audio [EXPERIMENTAL]"
-	 default 1
+	 default y
 	 select EXPERIMENTAL
 
 if NRF5340_AUDIO
@@ -14,7 +14,7 @@ if NRF5340_AUDIO
 config AUDIO_DEV
 	int "Select which device type to compile for. 1=HEADSET or 2=GATEWAY"
 	range 1 2
-	default 1
+	default 2
 	help
 	  Setting this variable to 1 selects that the project is compiled
 	  as a HEADSET device.

@@ -10,6 +10,11 @@
         "data_fifo.h": "c",
         "audio_usb.h": "c",
         "hal_gpio.h": "c",
-        "audio_i2s.h": "c"
+        "audio_i2s.h": "c",
+        "contin_array.h": "c",
+        "pcm_stream_channel_modifier.h": "c",
+        "initializer_list": "c",
+        "tone.h": "c",
+        "kernel.h": "c"
     }
 }

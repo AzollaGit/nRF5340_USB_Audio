@@ -9,7 +9,7 @@ target_sources(app PRIVATE
   src/app_main.c
   src/hal_uart.c
   src/hal_gpio.c
-  src/hal_i2s.c
+  # src/hal_i2s.c
   src/audio_usb.c
   src/audio_i2s.c
 )

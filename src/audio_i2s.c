@@ -62,7 +62,7 @@ static const nrfx_i2s_config_t i2s_cfg = {
 	.format = NRF_I2S_FORMAT_I2S,
 	.alignment = NRF_I2S_ALIGN_LEFT,
 	.ratio = CONFIG_AUDIO_RATIO,
-	.mck_setup = NRF_I2S_MCK_32MDIV8,
+	.mck_setup = NRF_I2S_MCK_32MDIV2,
 #if (CONFIG_AUDIO_BIT_DEPTH_16)
 	.sample_width = NRF_I2S_SWIDTH_16BIT,
 #elif (CONFIG_AUDIO_BIT_DEPTH_24)
@@ -72,7 +72,7 @@ static const nrfx_i2s_config_t i2s_cfg = {
 #else
 #error Invalid bit depth selected
 #endif /* (CONFIG_AUDIO_BIT_DEPTH_16) */
-	.channels = NRF_I2S_CHANNELS_STEREO,
+	.channels = NRF_I2S_CHANNELS_RIGHT,
 	.clksrc = NRF_I2S_CLKSRC_ACLK,
 	.enable_bypass = false,
 };
@@ -140,6 +140,8 @@ nrfx_err_t audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
 
 	state = AUDIO_I2S_STATE_STARTED;
 
+	printk("audio_i2s_start... %d\n", I2S_SAMPLES_NUM);
+
 	return ret;
 }
 
@@ -157,15 +159,8 @@ void audio_i2s_blk_comp_cb_register(i2s_blk_comp_callback_t blk_comp_callback)
 	i2s_blk_comp_callback = blk_comp_callback;
 }
 
-ISR_DIRECT_DECLARE(i2s_isr_handler) 
-{
-	nrfx_i2s_0_irq_handler();
-	ISR_DIRECT_PM();
-		
-	return 1; 
-}
 
-static void hfclkaudio_set(uint16_t freq_value)
+void hfclkaudio_set(uint16_t freq_value)
 {
 	uint16_t freq_val = freq_value;
 
@@ -175,6 +170,13 @@ static void hfclkaudio_set(uint16_t freq_value)
 	nrfx_clock_hfclkaudio_config_set(freq_val);
 }
 
+ISR_DIRECT_DECLARE(i2s_isr_handler) 
+{
+	nrfx_i2s_0_irq_handler();
+	ISR_DIRECT_PM();
+		
+	return 1; 
+}
 
 void audio_i2s_init(void)
 {
@@ -193,12 +195,15 @@ void audio_i2s_init(void)
 
 	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL), PINCTRL_STATE_DEFAULT);
 	__ASSERT_NO_MSG(ret == 0);
+
+	// 会报错：Has IRQ_CONNECT or IRQ_DIRECT_CONNECT accidentally been invoked on the same irq multiple times?
+	// IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_isr, nrfx_i2s_0_irq_handler, 0);
+	IRQ_DIRECT_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), i2s_isr_handler, 0);
+	irq_enable(DT_IRQN(I2S_NL));
  
 	ret = nrfx_i2s_init(&i2s_inst, &i2s_cfg, i2s_comp_handler);
 	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
-
-	IRQ_DIRECT_CONNECT(I2S0_IRQn, 0, i2s_isr_handler, 0);
-
+ 
 	state = AUDIO_I2S_STATE_IDLE;
 
 	printk("nrfx_i2s_init NRFX_SUCCESS...\r\n");
